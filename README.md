@@ -27,3 +27,30 @@ files to use `runner-b` instead of `rnd-runner`.
 
 With our `μserivce`, your teams will not even know that `Cluster A` had any
 problems and they can continue working as usual.
+
+## Commands
+
+### Sidecar
+
+The sidecar will check the status about the `GitLab Runner` and export a
+[liveness health check][liveness health check].
+
+[liveness health check]: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command
+
+### Checker
+
+The checker has 2 jobs:
+
+1. Status check:
+    - Checking the `liveness health check` of each available `GitLab Runner`
+installed on the same cluster
+    - Exporting the statuses (`Online / Total`) to the configured
+`GitLab` project
+1. Executer:
+    - Read the statuses of both clusters
+    - Decide if the current cluster is stronger (has more
+`GitLab Runner` available)
+    - Stronger:
+        - Update the tag list of the `GitLab Runners` to the desired main tag
+    - Weaker:
+        - Remove the main tag from the tag list
