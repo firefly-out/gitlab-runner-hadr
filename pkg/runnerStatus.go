@@ -1,4 +1,4 @@
-package main
+package pkg
 
 // RunnerStatus represents the json returned from gitlab-server/api/v4/runners.
 type RunnerStatus struct {
