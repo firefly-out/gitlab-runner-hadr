@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Url     string       = "https://herrmit-io-gitlab.com"
+	Url     string       = "https://hermit-io-gitlab.com"
 	RunnerA RunnerStatus = RunnerStatus{Active: true,
 		Paused:      false,
 		Description: "test-1-20150125",
