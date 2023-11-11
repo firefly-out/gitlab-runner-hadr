@@ -9,7 +9,7 @@ have an Active-Active scenario 24/7.
 
 ## Real Life Scenario
 
-An organization has `GitLab Runners` installed in 2 separated clusters 
+An organization has `GitLab Runners` installed in 2 separated clusters
 registered with different `Tags`:
 
 | Cluster | Tags |
