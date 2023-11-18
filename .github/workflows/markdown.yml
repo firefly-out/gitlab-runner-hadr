@@ -7,9 +7,9 @@ jobs:
     name: Lint .md files
     runs-on: ubuntu-latest
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
-    - name: Lint changelog file
-      uses: docker://avtodev/markdown-lint:v1 # fastest way
-      with:
-        args: '.'
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Lint changelog file
+        uses: docker://avtodev/markdown-lint:v1 # fastest way
+        with:
+          args: '.'
