@@ -47,10 +47,10 @@ The decider has 2 jobs:
 
 ![sidecar check](/docs/visio/2.%20Decider%20check.PNG)
 
- - Checking the `liveness health check` of each available `GitLab Runner`
+- Checking the `liveness health check` of each available `GitLab Runner`
 installed on the same cluster
 
- - Exporting the statuses (`Online / Total`) to the configured
+- Exporting the statuses (`Online / Total`) to the configured
 `GitLab` project
 
 ![sidecar check](/docs/visio/2.%20Decider%20check%20explained.PNG)
