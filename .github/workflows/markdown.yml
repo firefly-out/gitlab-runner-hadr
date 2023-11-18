@@ -1,0 +1,15 @@
+name: Markdown Lint Action
+run-name: ${{ github.actor }} is linting .md files 🚀
+on: [push]
+
+jobs:
+  lint-markdown-files:
+    name: Lint .md files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Lint changelog file
+        uses: docker://avtodev/markdown-lint:v1 # fastest way
+        with:
+          args: '.'
