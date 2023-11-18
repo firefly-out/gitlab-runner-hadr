@@ -33,7 +33,7 @@ var (
 	Runners = []RunnerStatus{RunnerA, RunnerB}
 )
 
-func Test_GetRunnerStatus(t *testing.T) {
+func Test_GetAllRunnerStatutes(t *testing.T) {
 	t.Run("fetching the runners status from the GitLab API", func(t *testing.T) {
 		// Arrange
 		defer gock.Off()
@@ -43,7 +43,7 @@ func Test_GetRunnerStatus(t *testing.T) {
 			JSON(Runners)
 
 		// Act
-		body, err := GetRunnerStatutes(Url + "/api")
+		body, err := GetAllRunnerStatutes(Url + "/api")
 
 		// Assert
 		assert.Equal(t, 2, len(body))
@@ -61,7 +61,7 @@ func Test_GetRunnerStatus(t *testing.T) {
 			JSON(map[string]string{"error": "Unauthorized"})
 
 		// Act
-		body, err := GetRunnerStatutes(Url + "/api")
+		body, err := GetAllRunnerStatutes(Url + "/api")
 
 		// Assert
 		assert.Nil(t, body)
@@ -77,7 +77,7 @@ func Test_GetRunnerStatus(t *testing.T) {
 			JSON(map[string]string{"foo": "bar"})
 
 		// Act
-		body, err := GetRunnerStatutes(Url + "/api")
+		body, err := GetAllRunnerStatutes(Url + "/api")
 
 		// Assert
 		assert.Nil(t, body)
@@ -86,7 +86,7 @@ func Test_GetRunnerStatus(t *testing.T) {
 
 	t.Run("request to an empty url", func(t *testing.T) {
 		// Act
-		body, err := GetRunnerStatutes("" + "/api")
+		body, err := GetAllRunnerStatutes("" + "/api")
 
 		// Assert
 		assert.Nil(t, body)

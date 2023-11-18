@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-// GetRunnerStatutes tries to fetch details about all available runners from the given API url.
+// GetAllRunnerStatutes tries to fetch details about all available runners from the given API url.
 // This method returns an array of the RunnerStatus struct.
-func GetRunnerStatutes(url string) (runners []RunnerStatus, err error) {
+func GetAllRunnerStatutes(url string) (runners []RunnerStatus, err error) {
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err
