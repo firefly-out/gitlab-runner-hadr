@@ -4,7 +4,8 @@ This server will mock the GitLabs API.
 
 ## GET /runners/33/runners
 
-Executing a `/GET` request to `/runners/33/runners` will result in the following json:
+Executing a `/GET` request to `/runners/33/runners` will result in the following
+json:
 
 ```json
 [
