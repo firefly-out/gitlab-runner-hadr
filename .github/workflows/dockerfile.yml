@@ -1,0 +1,36 @@
+name: Docker Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+      - feat*'
+
+jobs:
+  build-and-publish:
+    if: github.ref == 'refs/heads/main' # Run only if the push is on the main branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and push Docker image
+        if: github.ref == 'refs/heads/main' # Run the step only for the main branch
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_REPOSITORY: "zigelboimmisha/gitlab-runner-hadr"
+        run: |
+          docker build -t ${DOCKER_REPOSITORY}:main-${GITHUB_SHA} .
+          docker login -u "${DOCKER_USERNAME}" --password-stdin ${DOCKER_PASSWORD}
+          docker push ${DOCKER_REPOSITORY}:main-${GITHUB_SHA}
+
+      - name: Build Docker image
+        if: github.ref != 'refs/heads/main' # Run the step only for the main branch
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_REPOSITORY: "zigelboimmisha/gitlab-runner-hadr"
+        run: |
+          docker build -t ${DOCKER_REPOSITORY}:main-${GITHUB_SHA} .
