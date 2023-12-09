@@ -9,4 +9,4 @@ WORKDIR /cli
 COPY --from=build cli/gitlab-runner-hadr /cli/gitlab-runner-hadr
 
 # Define the command to run your application
-ENTRYPOINT ["./gitlab-runner-hadr", "--help"]
+ENTRYPOINT ["./gitlab-runner-hadr"]
