@@ -45,6 +45,9 @@ func Execute() {
 	sidecarCmd.MarkFlagRequired("gitlab-url")      // Mark the "gitlab-url" flag as required
 	sidecarCmd.MarkFlagRequired("gitlab-group-id") // Mark the "gitlab-group-id" flag as required
 
+	// Start serving the prometheus metrics
+	go pkg.RunUptimeMetrics()
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

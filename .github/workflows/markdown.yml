@@ -1,6 +1,9 @@
 name: Markdown Lint Action
 run-name: ${{ github.actor }} is linting .md files 🚀
-on: [push]
+on:
+  push:
+    paths:
+      - '**.md'
 
 jobs:
   lint-markdown-files:
@@ -12,4 +15,4 @@ jobs:
       - name: Lint changelog file
         uses: docker://avtodev/markdown-lint:v1 # fastest way
         with:
-          args: '.'
+          ignore: './test-server/README.md'
