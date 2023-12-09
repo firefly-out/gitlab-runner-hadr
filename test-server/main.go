@@ -30,7 +30,17 @@ var (
 		RunnerType:  "project_type",
 		Name:        "Runner-2",
 		Online:      true,
-		Status:      "online"},
+		Status:      "online"}, {
+		Active:      true,
+		Paused:      false,
+		Description: "test-3-20150125",
+		Id:          3,
+		IpAddress:   "271.231.10.3",
+		IsShared:    false,
+		RunnerType:  "project_type",
+		Name:        "Runner-3",
+		Online:      true,
+		Status:      "offline"},
 	}
 )
 
@@ -44,6 +54,7 @@ func main() {
 func handleGet(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
+		fmt.Println("Request was received!")
 		j, err := json.Marshal(Runners)
 		if err != nil {
 			fmt.Println(err)

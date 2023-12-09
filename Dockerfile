@@ -2,6 +2,7 @@
 FROM golang:alpine as build
 WORKDIR /cli
 COPY . /cli
+RUN go get
 RUN go build -o gitlab-runner-hadr
 
 FROM alpine:3.19.0 as runtime
