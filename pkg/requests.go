@@ -15,6 +15,8 @@ import (
 func SidecarExecutor(gitlabBaseUrl, gitlabGroupId string, statusInterval int) {
 	var fullApiUrl = fmt.Sprintf("%s/groups/%s/runners", gitlabBaseUrl, gitlabGroupId)
 	var runnerName = os.Getenv("HOSTNAME")
+	var duration = time.Duration(statusInterval) * time.Second // Calculate duration using the VARIABLE value
+
 	prometheus.Register(TotalStatusRequests)
 	prometheus.Register(TotalRunnersAvailableCount)
 	prometheus.Register(RunnerOnlineStatus)
@@ -22,40 +24,32 @@ func SidecarExecutor(gitlabBaseUrl, gitlabGroupId string, statusInterval int) {
 	fmt.Printf("Starting the GitLab Runner HADR Sidecar to check for Runner: %s\n"+
 		"Using \"%s\" to check for the runners status\n", runnerName, fullApiUrl)
 	for {
-		allRunnersAvailable, err := getAllRunnerStatutes(fullApiUrl)
+		allRunnersAvailable, err := getAllRunnerStatutes(fullApiUrl, gitlabGroupId)
 		if err != nil {
 			fmt.Println(err)
-			TotalStatusRequests.With(prometheus.Labels{"status": "failed"}).Inc()
-		} else {
-			TotalStatusRequests.With(prometheus.Labels{"status": "success"}).Inc()
 		}
-		TotalRunnersAvailableCount.Set(float64(len(allRunnersAvailable)))
+		changeTotalRunnersAvailableCount(float64(len(allRunnersAvailable)), gitlabGroupId)
 
 		status, err := fetchCurrentRunnerStatus(runnerName, allRunnersAvailable)
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(status)
+		checkRunnerStatus(status, gitlabGroupId)
 
-		if status.Online {
-			RunnerOnlineStatus.Set(1)
-		} else {
-			RunnerOnlineStatus.Set(0)
-		}
-
-		duration := time.Duration(statusInterval) * time.Second // Calculate duration using the VARIABLE value
 		time.Sleep(duration)
 	}
 }
 
 // getAllRunnerStatutes tries to fetch details about all available runners from the given API url.
 // This method returns an array of the RunnerStatus struct.
-func getAllRunnerStatutes(url string) (runners []RunnerStatus, err error) {
+func getAllRunnerStatutes(url string, gitlabGroupId string) (runners []RunnerStatus, err error) {
 	res, err := http.Get(url)
 	if err != nil {
+		increaseTotalStatusRequests("failed", gitlabGroupId)
 		return nil, err
 	}
 	defer res.Body.Close()
+	increaseTotalStatusRequests("success", gitlabGroupId)
 
 	if res.StatusCode != 200 {
 		return nil, fmt.Errorf("API is not available at the moment")
@@ -79,4 +73,17 @@ func fetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status
 		}
 	}
 	return RunnerStatus{}, fmt.Errorf("Runner %s was not found\n", runnerName)
+}
+
+// checkRunnerStatus to return true if the runners status is online, false otherwise.
+func checkRunnerStatus(runner RunnerStatus, gitlabGroupId string) (runnersStatus bool) {
+	if runner.Online {
+		changeRunnerOnlineStatus(1, gitlabGroupId)
+		runnersStatus = true
+	} else {
+		changeRunnerOnlineStatus(0, gitlabGroupId)
+		runnersStatus = false
+	}
+
+	return runnersStatus
 }
