@@ -8,7 +8,6 @@ on:
 
 jobs:
   build-and-publish:
-    if: github.ref == 'refs/heads/main' # Run only if the push is on the main branch
     runs-on: ubuntu-latest
 
     steps:
