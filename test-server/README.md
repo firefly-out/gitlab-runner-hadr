@@ -48,7 +48,7 @@ json:
 ]
 ```
 
-## How to run the test?
+## How to test locally?
 
 1st there is a need to run this server, can be done by `go run main.go`.
 
