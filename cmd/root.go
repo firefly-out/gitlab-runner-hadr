@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	GitLabUrl     string
-	GitLabGroupId string
+	GitLabUrl           string
+	GitLabGroupId       string
+	StatusCheckInterval int
 
 	rootCmd = &cobra.Command{
 		Use:   "gitlab-runner-hadr",
@@ -23,15 +24,13 @@ var (
 
 	// Command for the Sidecar
 	sidecarCmd = &cobra.Command{
-		Use:     "sidecar",
-		Short:   "Executes the sidecar mirco-service that will export the status of your GitLab Runner",
-		Example: "  cli sidecar -i 33 -u http://localhost:8080",
+		Use:   "sidecar",
+		Short: "Executes the sidecar mirco-service that will export the status of your GitLab Runner",
+		Example: `	cli sidecar -i 33 -u http://localhost:8080
+	Increasing the status check interval to 10 seconds:
+	cli sidecar -i 33 -u http://localhost:8080 -s 10`,
 		Run: func(cmd *cobra.Command, args []string) {
-			body, err := pkg.GetAllRunnerStatutes(GitLabUrl + "/groups/" + GitLabGroupId + "/runners")
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Println(body)
+			pkg.SidecarExecutor(GitLabUrl, GitLabGroupId, StatusCheckInterval)
 		},
 	}
 )
@@ -39,6 +38,7 @@ var (
 func Execute() {
 	sidecarCmd.Flags().StringVarP(&GitLabUrl, "gitlab-url", "u", "", "The GitLabs url to check if the runner is connected to it")
 	sidecarCmd.Flags().StringVarP(&GitLabGroupId, "gitlab-group-id", "i", "", "The group ID the runner is installed on")
+	sidecarCmd.Flags().IntVarP(&StatusCheckInterval, "status-check-interval", "s", 5, "Interval for checking the status of the runner in seconds")
 
 	// Add sidecar and decider commands to the root command
 	rootCmd.AddCommand(sidecarCmd)
