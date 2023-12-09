@@ -66,7 +66,7 @@ installed on the same cluster
 
 #### Stronger
 
-If stringer, it will update the tag list of the `GitLab Runners`
+If stronger, it will update the tag list of the `GitLab Runners`
 to the configured desired main cluster tag so users will not have to change
 their `.gitlab-ci.yml` files.
 
