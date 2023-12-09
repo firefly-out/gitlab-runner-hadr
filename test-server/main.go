@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	GetRunnersApiUrl = "/runners/33/runners"
+	GetRunnersApiUrl = "/groups/33/runners"
 	Runners          = []pkg.RunnerStatus{{
 		Active:      true,
 		Paused:      false,
