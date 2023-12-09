@@ -1,0 +1,6 @@
+*.md
+.idea/
+.github/
+test-server/
+.gitignore
+api-response-example.json
