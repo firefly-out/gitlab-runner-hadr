@@ -18,7 +18,7 @@ var (
 		IpAddress:   "271.15.10.1",
 		IsShared:    false,
 		RunnerType:  "project_type",
-		Name:        "",
+		Name:        "Runner-1",
 		Online:      true,
 		Status:      "online"}, {
 		Active:      true,
@@ -28,7 +28,7 @@ var (
 		IpAddress:   "271.15.10.3",
 		IsShared:    false,
 		RunnerType:  "project_type",
-		Name:        "",
+		Name:        "Runner-2",
 		Online:      true,
 		Status:      "online"},
 	}
