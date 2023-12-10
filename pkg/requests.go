@@ -79,11 +79,11 @@ func getAllRunnerStatutes(url, gitlabGroupId, token string) (runners []RunnerSta
 // to find the needed runner and return its status.
 func fetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status RunnerStatus, err error) {
 	for _, currentRunner := range runners {
-		if currentRunner.Name == runnerName {
+		if currentRunner.Description == runnerName {
 			return currentRunner, nil
 		}
 	}
-	return RunnerStatus{}, fmt.Errorf("Runner %s was not found", runnerName)
+	return RunnerStatus{}, fmt.Errorf("runner %s was not found", runnerName)
 }
 
 // checkRunnerStatus to return true if the runners status is online, false otherwise.
