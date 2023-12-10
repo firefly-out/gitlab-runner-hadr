@@ -83,7 +83,7 @@ func fetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status
 			return currentRunner, nil
 		}
 	}
-	return RunnerStatus{}, fmt.Errorf("Runner %s was not found\n", runnerName)
+	return RunnerStatus{}, fmt.Errorf("Runner %s was not found", runnerName)
 }
 
 // checkRunnerStatus to return true if the runners status is online, false otherwise.
