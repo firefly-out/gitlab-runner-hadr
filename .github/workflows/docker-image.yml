@@ -8,10 +8,13 @@
 # You can also reference a tag or branch, but the action may change without warning.
 
 name: Publish Docker image
+run-name: ${{ github.actor }} is building an image 🐳
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - "main"
+      - "feat/**"
 
 jobs:
   push_to_registry:
