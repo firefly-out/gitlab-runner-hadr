@@ -115,7 +115,7 @@ func Test_fetchCurrentRunnerStatus(t *testing.T) {
 
 		// Assert
 		assert.NotNil(t, status)
-		assert.ErrorContains(t, err, fmt.Sprintf("Runner %s was not found", RunnerCName))
+		assert.ErrorContains(t, err, fmt.Sprintf("runner %s was not found", RunnerCName))
 	})
 }
 
