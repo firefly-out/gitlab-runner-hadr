@@ -3,17 +3,22 @@ package pkg
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+var (
+	httpClient = &http.Client{}
 )
 
 // SidecarExecutor runs the sidecar for achieving the following goals:
 //   - Getting the status of the pods Runner
 //   - Exporting status using prometheus metrics
-func SidecarExecutor(gitlabBaseUrl, gitlabGroupId string, statusInterval int) {
-	var fullApiUrl = fmt.Sprintf("%s/groups/%s/runners", gitlabBaseUrl, gitlabGroupId)
+func SidecarExecutor(gitlabBaseUrl, gitlabGroupId, token, perPage string, statusInterval int) {
+	var fullApiUrl = fmt.Sprintf("%s/groups/%s/runners?per_page=%s", gitlabBaseUrl, gitlabGroupId, perPage)
 	var runnerName = os.Getenv("HOSTNAME")
 	var duration = time.Duration(statusInterval) * time.Second // Calculate duration using the VARIABLE value
 
@@ -24,7 +29,7 @@ func SidecarExecutor(gitlabBaseUrl, gitlabGroupId string, statusInterval int) {
 	fmt.Printf("Starting the GitLab Runner HADR Sidecar to check for Runner: %s\n"+
 		"Using \"%s\" to check for the runners status\n", runnerName, fullApiUrl)
 	for {
-		allRunnersAvailable, err := getAllRunnerStatutes(fullApiUrl, gitlabGroupId)
+		allRunnersAvailable, err := getAllRunnerStatutes(fullApiUrl, gitlabGroupId, token)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -42,8 +47,14 @@ func SidecarExecutor(gitlabBaseUrl, gitlabGroupId string, statusInterval int) {
 
 // getAllRunnerStatutes tries to fetch details about all available runners from the given API url.
 // This method returns an array of the RunnerStatus struct.
-func getAllRunnerStatutes(url string, gitlabGroupId string) (runners []RunnerStatus, err error) {
-	res, err := http.Get(url)
+func getAllRunnerStatutes(url, gitlabGroupId, token string) (runners []RunnerStatus, err error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("PRIVATE-TOKEN", token)
+	res, err := httpClient.Do(req)
 	if err != nil {
 		increaseTotalStatusRequests("failed", gitlabGroupId)
 		return nil, err
@@ -68,11 +79,11 @@ func getAllRunnerStatutes(url string, gitlabGroupId string) (runners []RunnerSta
 // to find the needed runner and return its status.
 func fetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status RunnerStatus, err error) {
 	for _, currentRunner := range runners {
-		if currentRunner.Name == runnerName {
+		if currentRunner.Description == runnerName {
 			return currentRunner, nil
 		}
 	}
-	return RunnerStatus{}, fmt.Errorf("Runner %s was not found\n", runnerName)
+	return RunnerStatus{}, fmt.Errorf("runner %s was not found", runnerName)
 }
 
 // checkRunnerStatus to return true if the runners status is online, false otherwise.
