@@ -2,9 +2,10 @@ package pkg
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 var (
@@ -12,7 +13,7 @@ var (
 	RunnerAName string       = "Runner-1"
 	RunnerA     RunnerStatus = RunnerStatus{Active: true,
 		Paused:      false,
-		Description: "test-1-20150125",
+		Description: RunnerAName,
 		Id:          1,
 		IpAddress:   "271.15.10.1",
 		IsShared:    false,
@@ -23,7 +24,7 @@ var (
 	RunnerBName string       = "Runner-2"
 	RunnerB     RunnerStatus = RunnerStatus{Active: true,
 		Paused:      false,
-		Description: "test-2-20150125",
+		Description: RunnerBName,
 		Id:          2,
 		IpAddress:   "271.15.10.3",
 		IsShared:    false,
@@ -33,8 +34,8 @@ var (
 		Status:      "offline"}
 	RunnerCName string = "Runner-3"
 	GroupId     string = "33"
-
-	Runners = []RunnerStatus{RunnerA, RunnerB}
+	Token       string = "dsa543ads"
+	Runners            = []RunnerStatus{RunnerA, RunnerB}
 )
 
 func Test_getAllRunnerStatutes(t *testing.T) {
@@ -47,7 +48,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 			JSON(Runners)
 
 		// Act
-		body, err := getAllRunnerStatutes(Url+"/api", GroupId)
+		body, err := getAllRunnerStatutes(Url+"/api", GroupId, Token)
 
 		// Assert
 		assert.Equal(t, 2, len(body))
@@ -65,7 +66,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 			JSON(map[string]string{"error": "Unauthorized"})
 
 		// Act
-		body, err := getAllRunnerStatutes(Url+"/api", GroupId)
+		body, err := getAllRunnerStatutes(Url+"/api", GroupId, Token)
 
 		// Assert
 		assert.Nil(t, body)
@@ -81,7 +82,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 			JSON(map[string]string{"foo": "bar"})
 
 		// Act
-		body, err := getAllRunnerStatutes(Url+"/api", GroupId)
+		body, err := getAllRunnerStatutes(Url+"/api", GroupId, Token)
 
 		// Assert
 		assert.Nil(t, body)
@@ -90,7 +91,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 
 	t.Run("request to an empty url", func(t *testing.T) {
 		// Act
-		body, err := getAllRunnerStatutes(""+"/api", GroupId)
+		body, err := getAllRunnerStatutes(""+"/api", GroupId, Token)
 
 		// Assert
 		assert.Nil(t, body)
@@ -114,7 +115,7 @@ func Test_fetchCurrentRunnerStatus(t *testing.T) {
 
 		// Assert
 		assert.NotNil(t, status)
-		assert.ErrorContains(t, err, fmt.Sprintf("Runner %s was not found", RunnerCName))
+		assert.ErrorContains(t, err, fmt.Sprintf("runner %s was not found", RunnerCName))
 	})
 }
 
