@@ -13,7 +13,7 @@ var (
 	Runners          = []pkg.RunnerStatus{{
 		Active:      true,
 		Paused:      false,
-		Description: "test-1-20150125",
+		Description: "gitlab-runner-76cc4c686c-crtp8",
 		Id:          1,
 		IpAddress:   "211.15.10.1",
 		IsShared:    false,
@@ -23,7 +23,7 @@ var (
 		Status:      "online"}, {
 		Active:      true,
 		Paused:      false,
-		Description: "test-2-20150125",
+		Description: "gitlab-runner-76cc4c686c-26bsf",
 		Id:          2,
 		IpAddress:   "211.15.10.3",
 		IsShared:    false,
@@ -33,7 +33,7 @@ var (
 		Status:      "online"}, {
 		Active:      true,
 		Paused:      false,
-		Description: "test-3-20150125",
+		Description: "gitlab-runner-76cc4c686c-2wjrp",
 		Id:          3,
 		IpAddress:   "211.231.10.3",
 		IsShared:    false,
@@ -48,7 +48,7 @@ func main() {
 	http.HandleFunc(GetRunnersApiUrl, handleGet)
 
 	log.Println("Go!")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }
 
 func handleGet(w http.ResponseWriter, req *http.Request) {

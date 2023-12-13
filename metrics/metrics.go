@@ -1,4 +1,4 @@
-package pkg
+package metrics
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
@@ -63,8 +63,8 @@ func RunUptimeMetrics() {
 	http.ListenAndServe(":8080", nil)
 }
 
-// increaseTotalStatusRequests to increase the gitlab_runner_hadr_sidecar_total_status_requests metric.
-func increaseTotalStatusRequests(status, gitlabGroupId string) {
+// IncreaseTotalStatusRequests to increase the gitlab_runner_hadr_sidecar_total_status_requests metric.
+func IncreaseTotalStatusRequests(status, gitlabGroupId string) {
 	TotalStatusRequests.With(
 		prometheus.Labels{
 			"status":        status,
@@ -74,8 +74,8 @@ func increaseTotalStatusRequests(status, gitlabGroupId string) {
 			"group_id":      gitlabGroupId}).Inc()
 }
 
-// changeRunnerOnlineStatus to change the gitlab_runner_hadr_sidecar_online_status metric.
-func changeRunnerOnlineStatus(runnerStatus float64, gitlabGroupId string) {
+// ChangeRunnerOnlineStatus to change the gitlab_runner_hadr_sidecar_online_status metric.
+func ChangeRunnerOnlineStatus(runnerStatus float64, gitlabGroupId string) {
 	RunnerOnlineStatus.With(
 		prometheus.Labels{
 			"pod_name":      PodName,
@@ -84,8 +84,8 @@ func changeRunnerOnlineStatus(runnerStatus float64, gitlabGroupId string) {
 			"group_id":      gitlabGroupId}).Set(runnerStatus)
 }
 
-// changeTotalRunnersAvailableCount to change the gitlab_runner_hadr_sidecar_total_runners_available metric.
-func changeTotalRunnersAvailableCount(runnersReturned float64, gitlabGroupId string) {
+// ChangeTotalRunnersAvailableCount to change the gitlab_runner_hadr_sidecar_total_runners_available metric.
+func ChangeTotalRunnersAvailableCount(runnersReturned float64, gitlabGroupId string) {
 	TotalRunnersAvailableCount.With(prometheus.Labels{
 		"pod_name":      PodName,
 		"pod_ip":        PodIp,

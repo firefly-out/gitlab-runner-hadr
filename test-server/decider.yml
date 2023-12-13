@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: decider
+  template:
+    metadata:
+      labels:
+        app: decider
+    spec:
+      containers:
+        - name: sidecar
+          image: docker.io/zigelboimmisha/gitlab-runner-hadr:004ace0
+          imagePullPolicy: Always
+          args:
+            - "decider"
+
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: gitlab-runners
+  name: pod-reader
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: read-pods
+  namespace: gitlab-runners
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: gitlab-runners
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
