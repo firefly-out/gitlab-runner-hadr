@@ -66,7 +66,6 @@ func Execute() {
 
 	// Adding decider command to the root command
 	rootCmd.AddCommand(deciderCmd)
-	deciderCmd.MarkFlagRequired("namespace")
 
 	// Start serving the prometheus metrics
 	go metrics.RunUptimeMetrics()

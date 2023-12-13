@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: sidecar
-          image: zigelboimmisha/gitlab-runner-hadr:test-1
+          image: docker.io/zigelboimmisha/gitlab-runner-hadr:004ace0
           imagePullPolicy: Always
           args:
             - "decider"

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: sidecar
-          image: zigelboimmisha/gitlab-runner-hadr:main-60081c3
+          image: docker.io/zigelboimmisha/gitlab-runner-hadr:004ace0
           ports:
             - containerPort: 8080
           args:
