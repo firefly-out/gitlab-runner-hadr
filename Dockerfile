@@ -1,7 +1,7 @@
 # Use an official Golang runtime as a parent image
 FROM golang:alpine as build
 WORKDIR /cli
-COPY . /cli
+COPY cmd metrics pkg go.mod go.sum main.go /cli/
 RUN go get
 RUN go build -o gitlab-runner-hadr
 
