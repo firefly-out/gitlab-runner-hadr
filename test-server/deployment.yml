@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-runner
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gitlab-runner
+  template:
+    metadata:
+      labels:
+        app: gitlab-runner
+    spec:
+      containers:
+        - name: sidecar
+          image: zigelboimmisha/gitlab-runner-hadr:main-60081c3
+          ports:
+            - containerPort: 8080
+          args:
+            - "sidecar"
+            - "-i"
+            - "33"
+            - "-u"
+            - "http://172.28.192.1:80"
+            - "-t"
+            - "dasdasdasd"
