@@ -48,7 +48,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 			JSON(Runners)
 
 		// Act
-		body, err := getAllRunnerStatutes(Url+"/api", GroupId, Token)
+		body, err := GetAllRunnerStatutes(Url+"/api", GroupId, Token)
 
 		// Assert
 		assert.Equal(t, 2, len(body))
@@ -66,7 +66,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 			JSON(map[string]string{"error": "Unauthorized"})
 
 		// Act
-		body, err := getAllRunnerStatutes(Url+"/api", GroupId, Token)
+		body, err := GetAllRunnerStatutes(Url+"/api", GroupId, Token)
 
 		// Assert
 		assert.Nil(t, body)
@@ -82,7 +82,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 			JSON(map[string]string{"foo": "bar"})
 
 		// Act
-		body, err := getAllRunnerStatutes(Url+"/api", GroupId, Token)
+		body, err := GetAllRunnerStatutes(Url+"/api", GroupId, Token)
 
 		// Assert
 		assert.Nil(t, body)
@@ -91,7 +91,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 
 	t.Run("request to an empty url", func(t *testing.T) {
 		// Act
-		body, err := getAllRunnerStatutes(""+"/api", GroupId, Token)
+		body, err := GetAllRunnerStatutes(""+"/api", GroupId, Token)
 
 		// Assert
 		assert.Nil(t, body)
@@ -102,7 +102,7 @@ func Test_getAllRunnerStatutes(t *testing.T) {
 func Test_fetchCurrentRunnerStatus(t *testing.T) {
 	t.Run("finding the needed runner", func(t *testing.T) {
 		// Act
-		status, err := fetchCurrentRunnerStatus(RunnerAName, Runners)
+		status, err := FetchCurrentRunnerStatus(RunnerAName, Runners)
 
 		// Assert
 		assert.Nil(t, err)
@@ -111,7 +111,7 @@ func Test_fetchCurrentRunnerStatus(t *testing.T) {
 
 	t.Run("runner does not exist", func(t *testing.T) {
 		// Act
-		status, err := fetchCurrentRunnerStatus(RunnerCName, Runners)
+		status, err := FetchCurrentRunnerStatus(RunnerCName, Runners)
 
 		// Assert
 		assert.NotNil(t, status)
@@ -122,7 +122,7 @@ func Test_fetchCurrentRunnerStatus(t *testing.T) {
 func Test_checkRunnerStatus(t *testing.T) {
 	t.Run("should return true is Online is true", func(t *testing.T) {
 		// Act
-		status := checkRunnerStatus(Runners[0], GroupId)
+		status := CheckRunnerStatus(Runners[0], GroupId)
 
 		// Assert
 		assert.True(t, status)
@@ -130,7 +130,7 @@ func Test_checkRunnerStatus(t *testing.T) {
 
 	t.Run("should return false is Online is false", func(t *testing.T) {
 		// Act
-		status := checkRunnerStatus(Runners[1], GroupId)
+		status := CheckRunnerStatus(Runners[1], GroupId)
 
 		// Assert
 		assert.False(t, status)

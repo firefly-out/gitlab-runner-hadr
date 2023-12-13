@@ -4,50 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
-	"time"
-
-	"github.com/prometheus/client_golang/prometheus"
+	"runner-hadr/metrics"
 )
 
 var (
 	httpClient = &http.Client{}
 )
 
-// SidecarExecutor runs the sidecar for achieving the following goals:
-//   - Getting the status of the pods Runner
-//   - Exporting status using prometheus metrics
-func SidecarExecutor(gitlabBaseUrl, gitlabGroupId, token, perPage string, statusInterval int) {
-	var fullApiUrl = fmt.Sprintf("%s/groups/%s/runners?per_page=%s", gitlabBaseUrl, gitlabGroupId, perPage)
-	var runnerName = os.Getenv("HOSTNAME")
-	var duration = time.Duration(statusInterval) * time.Second // Calculate duration using the VARIABLE value
-
-	prometheus.Register(TotalStatusRequests)
-	prometheus.Register(TotalRunnersAvailableCount)
-	prometheus.Register(RunnerOnlineStatus)
-
-	fmt.Printf("Starting the GitLab Runner HADR Sidecar to check for Runner: %s\n"+
-		"Using \"%s\" to check for the runners status\n", runnerName, fullApiUrl)
-	for {
-		allRunnersAvailable, err := getAllRunnerStatutes(fullApiUrl, gitlabGroupId, token)
-		if err != nil {
-			fmt.Println(err)
-		}
-		changeTotalRunnersAvailableCount(float64(len(allRunnersAvailable)), gitlabGroupId)
-
-		status, err := fetchCurrentRunnerStatus(runnerName, allRunnersAvailable)
-		if err != nil {
-			fmt.Println(err)
-		}
-		checkRunnerStatus(status, gitlabGroupId)
-
-		time.Sleep(duration)
-	}
-}
-
-// getAllRunnerStatutes tries to fetch details about all available runners from the given API url.
+// GetAllRunnerStatutes tries to fetch details about all available runners from the given API url.
 // This method returns an array of the RunnerStatus struct.
-func getAllRunnerStatutes(url, gitlabGroupId, token string) (runners []RunnerStatus, err error) {
+func GetAllRunnerStatutes(url, gitlabGroupId, token string) (runners []RunnerStatus, err error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -56,11 +22,11 @@ func getAllRunnerStatutes(url, gitlabGroupId, token string) (runners []RunnerSta
 	req.Header.Set("PRIVATE-TOKEN", token)
 	res, err := httpClient.Do(req)
 	if err != nil {
-		increaseTotalStatusRequests("failed", gitlabGroupId)
+		metrics.IncreaseTotalStatusRequests("failed", gitlabGroupId)
 		return nil, err
 	}
 	defer res.Body.Close()
-	increaseTotalStatusRequests("success", gitlabGroupId)
+	metrics.IncreaseTotalStatusRequests("success", gitlabGroupId)
 
 	if res.StatusCode != 200 {
 		return nil, fmt.Errorf("API is not available at the moment")
@@ -75,9 +41,9 @@ func getAllRunnerStatutes(url, gitlabGroupId, token string) (runners []RunnerSta
 	return runners, nil
 }
 
-// fetchCurrentRunnerStatus to iterate all the received RunnerStatus array
+// FetchCurrentRunnerStatus to iterate all the received RunnerStatus array
 // to find the needed runner and return its status.
-func fetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status RunnerStatus, err error) {
+func FetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status RunnerStatus, err error) {
 	for _, currentRunner := range runners {
 		if currentRunner.Description == runnerName {
 			return currentRunner, nil
@@ -86,13 +52,13 @@ func fetchCurrentRunnerStatus(runnerName string, runners []RunnerStatus) (status
 	return RunnerStatus{}, fmt.Errorf("runner %s was not found", runnerName)
 }
 
-// checkRunnerStatus to return true if the runners status is online, false otherwise.
-func checkRunnerStatus(runner RunnerStatus, gitlabGroupId string) (runnersStatus bool) {
+// CheckRunnerStatus to return true if the runners status is online, false otherwise.
+func CheckRunnerStatus(runner RunnerStatus, gitlabGroupId string) (runnersStatus bool) {
 	if runner.Online {
-		changeRunnerOnlineStatus(1, gitlabGroupId)
+		metrics.ChangeRunnerOnlineStatus(1, gitlabGroupId)
 		runnersStatus = true
 	} else {
-		changeRunnerOnlineStatus(0, gitlabGroupId)
+		metrics.ChangeRunnerOnlineStatus(0, gitlabGroupId)
 		runnersStatus = false
 	}
 
